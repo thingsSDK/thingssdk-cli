@@ -2,9 +2,9 @@
   "name": "thingssdk-cli",
   "version": "1.0.0",
   "description": "Generator for JavaScript microcontroller projects",
-  "main": "bin/thingssdk",
+  "main": "bin/thingssdk.js",
   "bin": {
-    "thingssdk": "./bin/thingssdk"
+    "thingssdk": "./bin/thingssdk.js"
   },
   "scripts": {
     "test": "mocha"
