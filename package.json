@@ -1,0 +1,25 @@
+{
+  "name": "thingssdk-cli",
+  "version": "1.0.0",
+  "description": "Generator for JavaScript microcontroller projects",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thingsSDK/thingssdk-cli.git"
+  },
+  "keywords": [
+    "JavaScript",
+    "IoT",
+    "ESP8266",
+    "Espruino"
+  ],
+  "author": "Andrew Chalkley <andrew@chalkley.org>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thingsSDK/thingssdk-cli/issues"
+  },
+  "homepage": "https://github.com/thingsSDK/thingssdk-cli#readme"
+}
