@@ -1,4 +1,4 @@
-# thingssdk-cli
+# ThingsSDK CLI
 
 ## Install CLI
 
