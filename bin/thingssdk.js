@@ -34,24 +34,26 @@ function isDirectoryEmpty(path, callback) {
 function createApplicaiton(destinationPath) {   
     isDirectoryEmpty(destinationPath, (isEmpty) => {
         if (isEmpty) {
-            createFiles(destinationPath);
+            createFiles(destinationPath, applicationFinished(destinationPath));
         } else {
             //TODO Confirm if user wants to overwrite
             if(false) {
                 console.error("No project was created.");
                 process.exit(1);
             } else {
-                createFiles(destinationPath, (err) => {
-                    if(err) throw err;
-                    console.log(
-                        `To install the project dependencies:\n\tcd ${destinationPath} && npm install`)
-                    console.log(
-                        `To start your project:\n\tcd ${destinationPath} && npm staart`)
-                });
+                createFiles(destinationPath, applicationFinished(destinationPath));
             }
         }
     });
 }
+
+function applicationFinished(destinationPath) {
+    return (err) => {
+       if(err) throw err;
+       console.log(`To install the project dependencies:\n\tcd ${destinationPath} && npm install`)
+       console.log(`To start your project:\n\tcd ${destinationPath} && npm staart`);
+    };
+}            
 
 function createFiles(destinationPath, done) {
     const app_name = path.basename(path.resolve(destinationPath));
