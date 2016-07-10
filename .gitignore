@@ -39,3 +39,6 @@ typings
 # IDE/Editors
 .idea
 .vscode
+
+# tmp directory
+tmp

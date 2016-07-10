@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/thingsSDK/thingssdk-cli#readme",
   "dependencies": {
+    "mkdirp": "^0.5.1",
     "yargs": "^4.7.1"
   }
 }
