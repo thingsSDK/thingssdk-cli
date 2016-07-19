@@ -49,9 +49,9 @@ function createApplicaiton(destinationPath) {
 
 function applicationFinished(destinationPath) {
     return (err) => {
-       if(err) throw err;
-       console.log(`To install the project dependencies:\n\tcd ${destinationPath} && npm install`)
-       console.log(`To start your project:\n\tcd ${destinationPath} && npm staart`);
+       if (err) throw err;
+       console.log(`To install the project dependencies:\n\tcd ${destinationPath} && npm install`);
+       console.log(`To upload to your device:\n\tcd ${destinationPath} && npm run push`);
     };
 }            
 
@@ -60,7 +60,8 @@ function createFiles(destinationPath, done) {
     mkdirp(destinationPath + "/scripts", (err) => {
     
         /* Copy templates */
-        const scriptPath = path.join(__dirname, "..", "templates", argv.runtime, "scripts");
+        const templatesPath = path.join(__dirname, "..", "templates");
+        const scriptPath = path.join(templatesPath, argv.runtime, "scripts");
         fs.readdir(scriptPath, (err, files) => {
             if (err) return done(err);
             files.forEach(file => copy(path.join(scriptPath, file), path.join(destinationPath, "scripts", file)));
@@ -69,6 +70,7 @@ function createFiles(destinationPath, done) {
         /* Create package.json for project */
         const pkg = createPackageJSON(app_name);
         write(path.join(destinationPath,"package.json"), JSON.stringify(pkg, null, 2));
+        copy(path.join(templatesPath, 'main.js'), path.join(destinationPath, 'main.js'));
         done();
     });
 }
@@ -86,12 +88,15 @@ function createPackageJSON(app_name) {
         name: app_name,
         version: '0.0.0',
         private: true,
+        main: 'main.js',
         scripts: {
-            start: "TODO: SOME WATCH COMMAND",
-            build: "node ./scripts/build",
-            deploy: "node ./scripts/deploy"
+            push: "node ./scripts/upload"
         },
         devDependencies: {
+            "babel-preset-es2015": "^6.9.0",
+            "babel-preset-es2015-rollup": "^1.1.1",
+            "rollup": "^0.34.1",
+            "rollup-plugin-babel": "^2.6.1",
             "serialport": "^4.0.0"
         },
         engines: {
