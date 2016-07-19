@@ -12,7 +12,7 @@ rollup({
     ]
 }).then(bundle => {
     let result = bundle.generate({
-        format: 'iife'
+        format: 'cjs'
     });
     console.log('Got back');
     console.log(result.code);

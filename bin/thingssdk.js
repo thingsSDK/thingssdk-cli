@@ -38,7 +38,7 @@ function createApplicaiton(destinationPath) {
         } else {
             //TODO Confirm if user wants to overwrite
             if(false) {
-                console.error("No project was created.");
+                console.error("No project files were changed.");
                 process.exit(1);
             } else {
                 createFiles(destinationPath, applicationFinished(destinationPath));

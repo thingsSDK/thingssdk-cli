@@ -1,6 +1,7 @@
-const api = {
-    hello: (who) => `Hello ${who}`,
-    sayIt: console.log
-};
+"use strict";
+import {printMessage} from './really/complex/printer';
 
-export default api;
+export function sayIt(message) { 
+    printMessage(message);
+}
+export default sayIt;

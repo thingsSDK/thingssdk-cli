@@ -1,11 +1,7 @@
-import api from './utils';
-
-class Silly {
-    aFunction() {
-        api.sayIt("Looks like this");
-        api.sayIt(api.hello("Craig"));
-    }
-}
-
-let silly = new Silly();
-silly.aFunction();
+import {sayIt} from './utils';
+import {sayIt as otherSayit} from './util2';
+E.on(() => {
+    const wifi = require('Wifi');
+    sayIt("Hello!");
+    otherSayit("Bye!");
+});
