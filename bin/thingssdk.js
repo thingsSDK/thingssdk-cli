@@ -15,7 +15,7 @@ const argv = require("yargs")
     .argv;
 
 const RUNTIMES = {
-    espruino: "1.85"
+    espruino: "1.86"
 };
 
 const NO_SUCH_FILE_OR_DIRECTORY_ERROR_CODE = 'ENOENT';
@@ -49,9 +49,9 @@ function createApplicaiton(destinationPath) {
 
 function applicationFinished(destinationPath) {
     return (err) => {
-       if (err) throw err;
-       console.log(`To install the project dependencies:\n\tcd ${destinationPath} && npm install`);
-       console.log(`To upload to your device:\n\tcd ${destinationPath} && npm run push`);
+	    if (err) throw err;
+	    console.log(`To install the project dependencies:\n\tcd ${destinationPath} && npm install`);
+	    console.log(`To upload to your device:\n\tcd ${destinationPath} && npm run push`);
     };
 }            
 
@@ -90,14 +90,11 @@ function createPackageJSON(app_name) {
         private: true,
         main: 'main.js',
         scripts: {
-            push: "node ./scripts/upload"
+            push: "node ./scripts/push"
         },
         devDependencies: {
-            "babel-preset-es2015": "^6.9.0",
-            "babel-preset-es2015-rollup": "^1.1.1",
-            "rollup": "^0.34.1",
-            "rollup-plugin-babel": "^2.6.1",
-            "serialport": "^4.0.0"
+            "thingssdk-deployer": "github:thingssdk/thingssdk-deployer",
+            "thingssdk-espruino-strategy": "github:thingssdk/thingssdk-espruino-strategy"
         },
         engines: {
         
