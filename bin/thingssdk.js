@@ -31,7 +31,7 @@ function isDirectoryEmpty(path, callback) {
     });
 }
 
-function createApplicaiton(destinationPath) {   
+function createApplication(destinationPath) {
     isDirectoryEmpty(destinationPath, (isEmpty) => {
         if (isEmpty) {
             createFiles(destinationPath, applicationFinished(destinationPath));
@@ -53,12 +53,12 @@ function applicationFinished(destinationPath) {
 	    console.log(`To install the project dependencies:\n\tcd ${destinationPath} && npm install`);
 	    console.log(`To upload to your device:\n\tcd ${destinationPath} && npm run push`);
     };
-}            
+}
 
 function createFiles(destinationPath, done) {
     const app_name = path.basename(path.resolve(destinationPath));
     mkdirp(destinationPath + "/scripts", (err) => {
-    
+
         /* Copy templates */
         const templatesPath = path.join(__dirname, "..", "templates");
         const scriptPath = path.join(templatesPath, argv.runtime, "scripts");
@@ -80,7 +80,7 @@ function copy(from, to) {
 }
 
 function write(path, contents) {
-    fs.writeFileSync(path, contents); 
+    fs.writeFileSync(path, contents);
 }
 
 function createPackageJSON(app_name) {
@@ -97,7 +97,7 @@ function createPackageJSON(app_name) {
             "thingssdk-espruino-strategy": "github:thingssdk/thingssdk-espruino-strategy"
         },
         engines: {
-        
+
         }
     };
 
@@ -106,4 +106,4 @@ function createPackageJSON(app_name) {
     return pkg;
 }
 
-createApplicaiton(argv.path);
+createApplication(argv.path);
