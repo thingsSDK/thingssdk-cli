@@ -71,6 +71,7 @@ function createFiles(destinationPath, done) {
         const pkg = createPackageJSON(app_name);
         write(path.join(destinationPath,"package.json"), JSON.stringify(pkg, null, 2));
         copy(path.join(templatesPath, 'main.js'), path.join(destinationPath, 'main.js'));
+        copy(path.join(templatesPath, 'dot-gitignore'), path.join(destinationPath, '.gitignore'));
         done();
     });
 }
