@@ -4,6 +4,7 @@
 const path = require("path");
 const fs = require("fs");
 const inquirer = require("inquirer");
+const serialport = require("serialport");
 const mkdirp = require("mkdirp");
 const cliPackage = require("../package.json");
 const exec = require("child_process").exec;
@@ -73,8 +74,8 @@ function createFiles(destinationPath, done) {
         write(path.join(destinationPath,"package.json"), JSON.stringify(pkg, null, 2));
         copy(path.join(templatesPath, 'main.js'), path.join(destinationPath, 'main.js'));
         copy(path.join(templatesPath, 'dot-gitignore'), path.join(destinationPath, '.gitignore'));
-        createDevicesJSON().then(function(devices, error){
-            if (error) return done(error);
+        /* Create devices.json and finish */
+        createDevicesJSON().then((devices) => {
             write(path.join(destinationPath,"devices.json"), JSON.stringify(devices, null, 2));
             done();
         });
@@ -112,41 +113,56 @@ function createPackageJSON(app_name) {
     return pkg;
 }
 
-function createDevicesJSON(){
-    var questions = [
-        {
-            type: 'list',
-            name: 'port',
-            message: 'Select a port:',
-            choices: ['COM5', 'COM7'],
-            default: 'COM5'
-        },
-        {
-            type: 'list',
-            name: 'baud',
-            message: 'Select the baud rate:',
-            choices: ['9600', '115200'],
-            default: '115200'
-        }
-    ];
+function getPorts() {
+    return new Promise(
+        (resolve, reject) => {
+            serialport.list(
+                (err, ports) => {
+                resolve(ports.map((port) => port.comName))
+                if (err) reject(err);
+                });
+        });
+}
 
-    var deviceJSON = inquirer.prompt(questions).then(function(answers){
-        const port = answers.port;
-        const baud = parseInt(answers.baud);
+function createDevicesJSON() {
+    return new Promise((resolve, reject) => {
+        getPorts().then((ports) => {
+            var questions = [
+                {
+                    type: 'list',
+                    name: 'port',
+                    message: 'Select a port:',
+                    choices: ports,
+                    default: ports[0]
+                },
+                {
+                    type: 'list',
+                    name: 'baud',
+                    message: 'Select the baud rate:',
+                    choices: ['9600', '115200'],
+                    default: '115200'
+                }
+            ];
 
-        var devices = {
-            devices: {}   
-        }
+            let deviceJSON = inquirer.prompt(questions).then((answers) => {
+                const port = answers.port;
+                const baud = parseInt(answers.baud);
 
-        devices.devices[port] = {
-            'baud_rate': baud,
-            'runtime': argv.runtime
-        }
+                let devices = {
+                    devices: {}   
+                }
 
-        return devices;
+                devices.devices[port] = {
+                    'baud_rate': baud,
+                    'runtime': argv.runtime
+                }
+
+                return devices;
+            });
+
+            resolve(deviceJSON);
+        });
     });
-
-    return deviceJSON;
 }
 
 createApplication(argv.path);
