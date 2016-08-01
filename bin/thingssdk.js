@@ -3,6 +3,7 @@
 
 const path = require("path");
 const fs = require("fs");
+const inquirer = require("inquirer");
 const mkdirp = require("mkdirp");
 const cliPackage = require("../package.json");
 const exec = require("child_process").exec;
@@ -72,7 +73,11 @@ function createFiles(destinationPath, done) {
         write(path.join(destinationPath,"package.json"), JSON.stringify(pkg, null, 2));
         copy(path.join(templatesPath, 'main.js'), path.join(destinationPath, 'main.js'));
         copy(path.join(templatesPath, 'dot-gitignore'), path.join(destinationPath, '.gitignore'));
-        done();
+        createDevicesJSON().then(function(devices, error){
+            if (error) return done(error);
+            write(path.join(destinationPath,"devices.json"), JSON.stringify(devices, null, 2));
+            done();
+        });
     });
 }
 
@@ -105,6 +110,43 @@ function createPackageJSON(app_name) {
     pkg.engines[argv.runtime] = RUNTIMES[argv.runtime];
 
     return pkg;
+}
+
+function createDevicesJSON(){
+    var questions = [
+        {
+            type: 'list',
+            name: 'port',
+            message: 'Select a port:',
+            choices: ['COM5', 'COM7'],
+            default: 'COM5'
+        },
+        {
+            type: 'list',
+            name: 'baud',
+            message: 'Select the baud rate:',
+            choices: ['9600', '115200'],
+            default: '115200'
+        }
+    ];
+
+    var deviceJSON = inquirer.prompt(questions).then(function(answers){
+        const port = answers.port;
+        const baud = parseInt(answers.baud);
+
+        var devices = {
+            devices: {}   
+        }
+
+        devices.devices[port] = {
+            'baud_rate': baud,
+            'runtime': argv.runtime
+        }
+
+        return devices;
+    });
+
+    return deviceJSON;
 }
 
 createApplication(argv.path);
