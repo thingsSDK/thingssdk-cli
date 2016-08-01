@@ -69,6 +69,7 @@ function applicationFinished(destinationPath) {
 	    if (err) throw err;
 	    console.log(`To install the project dependencies:\n\tcd ${destinationPath} && npm install`);
 	    console.log(`To upload to your device:\n\tcd ${destinationPath} && npm run push`);
+        process.exit(0);
     };
 }
 
