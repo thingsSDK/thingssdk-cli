@@ -10,6 +10,14 @@ const readLine = require("readline").createInterface({
     input: process.stdin,
     output: process.stdout
 });
+const colors = require("colors");
+colors.setTheme({
+    info: "green",
+    help: "cyan",
+    warn: "yellow",
+    debug: "blue",
+    error: "red"
+});
 
 const argv = require("yargs")
     .version(cliPackage.version)
@@ -45,17 +53,17 @@ Would you like to overwrite the existing files?
 Type y or n: `, (answer) => {
                 switch (answer.toLowerCase().trim()) {
                     case ("y" || "yes"):
-                        console.log("Answered 'yes'. Overwriting existing project files.");
+                        console.log(colors.info("You answered yes. Overwriting existing project files."));
                         readLine.close();
                         createFiles(destinationPath, applicationFinished(destinationPath));
                         break;
                     case ("n" || "no"):
-                        console.log("No project files were changed. Aborting new project creation.");
+                        console.log(colors.warn("No project files were changed. Aborting new project creation."));
                         readLine.close();
                         process.exit(1);
                         break;
                     default:
-                        console.error("I don't understand your input. No project files were changed. Aborting new project creation.");
+                        console.error(colors.error("I don't understand your input. No project files were changed. Aborting new project creation."));
                         readLine.close();
                         process.exit(1);
                 }
@@ -66,9 +74,11 @@ Type y or n: `, (answer) => {
 
 function applicationFinished(destinationPath) {
     return (err) => {
-	    if (err) throw err;
-	    console.log(`To install the project dependencies:\n\tcd ${destinationPath} && npm install`);
-	    console.log(`To upload to your device:\n\tcd ${destinationPath} && npm run push`);
+        if (err) throw err;
+        console.log(colors.help(`To install the project dependencies:
+    cd ${destinationPath} && npm install
+To upload to your device:
+    cd ${destinationPath} && npm run push`));
         process.exit(0);
     };
 }
