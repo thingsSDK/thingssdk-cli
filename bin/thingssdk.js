@@ -3,6 +3,8 @@
 
 const path = require("path");
 const fs = require("fs");
+const inquirer = require("inquirer");
+const serialport = require("serialport");
 const mkdirp = require("mkdirp");
 const cliPackage = require("../package.json");
 const exec = require("child_process").exec;
@@ -100,7 +102,11 @@ function createFiles(destinationPath, done) {
         write(path.join(destinationPath,"package.json"), JSON.stringify(pkg, null, 2));
         copy(path.join(templatesPath, 'main.js'), path.join(destinationPath, 'main.js'));
         copy(path.join(templatesPath, 'dot-gitignore'), path.join(destinationPath, '.gitignore'));
-        done();
+        /* Create devices.json and finish */
+        createDevicesJSON().then((devices) => {
+            write(path.join(destinationPath,"devices.json"), JSON.stringify(devices, null, 2));
+            done();
+        }).catch((error) => console.error(error));
     });
 }
 
@@ -133,6 +139,58 @@ function createPackageJSON(app_name) {
     pkg.engines[argv.runtime] = RUNTIMES[argv.runtime];
 
     return pkg;
+}
+
+function getPorts() {
+    return new Promise(
+        (resolve, reject) => {
+            serialport.list(
+                (err, ports) => {
+                    if (err) reject(err);
+                    resolve(ports.map((port) => port.comName));
+                });
+        });
+}
+
+function createDevicesJSON() {
+    return new Promise((resolve, reject) => {
+        getPorts().then((ports) => {
+            let questions = [
+                {
+                    type: 'list',
+                    name: 'port',
+                    message: 'Select a port:',
+                    choices: ports,
+                    default: ports[0]
+                },
+                {
+                    type: 'list',
+                    name: 'baud',
+                    message: 'Select the baud rate:',
+                    choices: ['9600', '115200'],
+                    default: '115200'
+                }
+            ];
+
+            let deviceJSON = inquirer.prompt(questions).then((answers) => {
+                const port = answers.port;
+                const baud = parseInt(answers.baud);
+
+                let devices = {
+                    devices: {}   
+                }
+
+                devices.devices[port] = {
+                    'baud_rate': baud,
+                    'runtime': argv.runtime
+                }
+
+                return devices;
+            });
+
+            resolve(deviceJSON);
+        }).catch((error) => console.error(error));
+    });
 }
 
 createApplication(argv.path);
