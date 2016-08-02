@@ -53,23 +53,23 @@ function createApplication(destinationPath) {
             readLine.question(`Files already exist at ${destinationPath}.
 Would you like to overwrite the existing files?
 Type y or n: `, (answer) => {
-                switch (answer.toLowerCase().trim()) {
-                    case ("y" || "yes"):
-                        console.log(colors.info("You answered yes. Overwriting existing project files."));
-                        readLine.close();
-                        createFiles(destinationPath, applicationFinished(destinationPath));
-                        break;
-                    case ("n" || "no"):
-                        console.log(colors.warn("No project files were changed. Aborting new project creation."));
-                        readLine.close();
-                        process.exit(1);
-                        break;
-                    default:
-                        console.error(colors.error("I don't understand your input. No project files were changed. Aborting new project creation."));
-                        readLine.close();
-                        process.exit(1);
-                }
-            });
+                    switch (answer.toLowerCase().trim()) {
+                        case ("y" || "yes"):
+                            console.log(colors.info("You answered yes. Overwriting existing project files."));
+                            readLine.close();
+                            createFiles(destinationPath, applicationFinished(destinationPath));
+                            break;
+                        case ("n" || "no"):
+                            console.log(colors.warn("No project files were changed. Aborting new project creation."));
+                            readLine.close();
+                            process.exit(1);
+                            break;
+                        default:
+                            console.error(colors.error("I don't understand your input. No project files were changed. Aborting new project creation."));
+                            readLine.close();
+                            process.exit(1);
+                    }
+                });
         }
     });
 }
@@ -99,12 +99,12 @@ function createFiles(destinationPath, done) {
 
         /* Create package.json for project */
         const pkg = createPackageJSON(app_name);
-        write(path.join(destinationPath,"package.json"), JSON.stringify(pkg, null, 2));
+        write(path.join(destinationPath, "package.json"), JSON.stringify(pkg, null, 2));
         copy(path.join(templatesPath, 'main.js'), path.join(destinationPath, 'main.js'));
         copy(path.join(templatesPath, 'dot-gitignore'), path.join(destinationPath, '.gitignore'));
         /* Create devices.json and finish */
         createDevicesJSON().then((devices) => {
-            write(path.join(destinationPath,"devices.json"), JSON.stringify(devices, null, 2));
+            write(path.join(destinationPath, "devices.json"), JSON.stringify(devices, null, 2));
             done();
         }).catch((error) => console.error(error));
     });
@@ -141,55 +141,88 @@ function createPackageJSON(app_name) {
     return pkg;
 }
 
+function clearLine() {
+    const CLEAR_LINE = new Buffer('1b5b304b', 'hex').toString();
+    const MOVE_LEFT = new Buffer('1b5b3130303044', 'hex').toString();
+    process.stdout.write(MOVE_LEFT + CLEAR_LINE);
+    process.stdout.write("");
+}
+
+function printLoading(message, loadingChar, count) {
+    let i = 0;
+    let interval = setInterval(() => {
+        if (i === 0) {
+            process.stdout.write(message);
+        }
+        process.stdout.write(loadingChar);
+        if (i > count) {
+            clearLine();
+            process.stdout.write(message);
+            i = 0;
+        }
+        i++;
+    }, 400);
+    return () => {
+        clearInterval(interval);
+        clearLine();
+    };
+}
+
 function getPorts() {
+    let clearDevicePrompt;
     return new Promise(
         (resolve, reject) => {
-            serialport.list(
-                (err, ports) => {
-                    if (err) reject(err);
-                    resolve(ports.map((port) => port.comName));
-                });
+            function portResolver(err, ports) {
+                if (err) reject(err);
+                const portNames = ports.map((port) => port.comName);
+                if (portNames.length > 0) {
+                    clearDevicePrompt && clearDevicePrompt();
+                    resolve(portNames);
+                } else {
+                    clearDevicePrompt = clearDevicePrompt || printLoading("Plug your device in", ".", 3);
+                    serialport.list(portResolver);
+                }
+            }
+            serialport.list(portResolver);
         });
 }
 
 function createDevicesJSON() {
-    return new Promise((resolve, reject) => {
-        getPorts().then((ports) => {
-            let questions = [
-                {
-                    type: 'list',
-                    name: 'port',
-                    message: 'Select a port:',
-                    choices: ports,
-                    default: ports[0]
-                },
-                {
-                    type: 'list',
-                    name: 'baud',
-                    message: 'Select the baud rate:',
-                    choices: ['9600', '115200'],
-                    default: '115200'
-                }
-            ];
+    return getPorts().then((ports) => {
+        let questions = [
+            {
+                type: 'list',
+                name: 'port',
+                message: 'Select a port:',
+                choices: ports,
+                default: ports[0]
+            },
+            {
+                type: 'list',
+                name: 'baud',
+                message: 'Select the baud rate:',
+                choices: ['9600', '115200'],
+                default: '115200'
+            }
+        ];
 
-            let deviceJSON = inquirer.prompt(questions).then((answers) => {
-                const port = answers.port;
-                const baud = parseInt(answers.baud);
+        let deviceJSON = inquirer.prompt(questions).then((answers) => {
+            const port = answers.port;
+            const baud = parseInt(answers.baud);
 
-                let devices = {
-                    devices: {}   
-                };
+            let devices = {
+                devices: {}
+            };
 
-                devices.devices[port] = {
-                    'baud_rate': baud,
-                    'runtime': argv.runtime
-                };
+            devices.devices[port] = {
+                'baud_rate': baud,
+                'runtime': argv.runtime
+            };
 
-                return devices;
-            });
+            return devices;
+        });
 
-            resolve(deviceJSON);
-        }).catch((error) => console.error(error));
+        return deviceJSON;
     });
 }
 
