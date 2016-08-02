@@ -6,6 +6,10 @@ const fs = require("fs");
 const mkdirp = require("mkdirp");
 const cliPackage = require("../package.json");
 const exec = require("child_process").exec;
+const readLine = require("readline").createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
 const argv = require("yargs")
     .version(cliPackage.version)
@@ -35,14 +39,27 @@ function createApplication(destinationPath) {
     isDirectoryEmpty(destinationPath, (isEmpty) => {
         if (isEmpty) {
             createFiles(destinationPath, applicationFinished(destinationPath));
-        } else {
-            //TODO Confirm if user wants to overwrite
-            if(false) {
-                console.error("No project files were changed.");
-                process.exit(1);
-            } else {
-                createFiles(destinationPath, applicationFinished(destinationPath));
-            }
+        } else if (!isEmpty) {
+            readLine.question(`Files already exist at ${destinationPath}.
+Would you like to overwrite the existing files?
+Type y or n: `, (answer) => {
+                switch (answer.toLowerCase().trim()) {
+                    case ("y" || "yes"):
+                        console.log("Answered 'yes'. Overwriting existing project files.");
+                        readLine.close();
+                        createFiles(destinationPath, applicationFinished(destinationPath));
+                        break;
+                    case ("n" || "no"):
+                        console.log("No project files were changed. Aborting new project creation.");
+                        readLine.close();
+                        process.exit(1);
+                        break;
+                    default:
+                        console.error("I don't understand your input. No project files were changed. Aborting new project creation.");
+                        readLine.close();
+                        process.exit(1);
+                }
+            });
         }
     });
 }
@@ -52,6 +69,7 @@ function applicationFinished(destinationPath) {
 	    if (err) throw err;
 	    console.log(`To install the project dependencies:\n\tcd ${destinationPath} && npm install`);
 	    console.log(`To upload to your device:\n\tcd ${destinationPath} && npm run push`);
+        process.exit(0);
     };
 }
 
