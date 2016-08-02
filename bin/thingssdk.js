@@ -178,12 +178,12 @@ function createDevicesJSON() {
 
                 let devices = {
                     devices: {}   
-                }
+                };
 
                 devices.devices[port] = {
                     'baud_rate': baud,
                     'runtime': argv.runtime
-                }
+                };
 
                 return devices;
             });
