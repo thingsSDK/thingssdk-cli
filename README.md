@@ -10,6 +10,8 @@ Note that this project uses [serialport](https://github.com/EmergingTechnologyAd
 
 ## Usage
 
+Plug your device in first. You'll need to pick the port you're using to generate the `devices.json` file.
+
 ```bash
 $ thingssdk new path/to/project_name
 ```

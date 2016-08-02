@@ -78,7 +78,7 @@ function createFiles(destinationPath, done) {
         createDevicesJSON().then((devices) => {
             write(path.join(destinationPath,"devices.json"), JSON.stringify(devices, null, 2));
             done();
-        });
+        }).catch((error) => console.error(error));
     });
 }
 
@@ -118,8 +118,8 @@ function getPorts() {
         (resolve, reject) => {
             serialport.list(
                 (err, ports) => {
-                resolve(ports.map((port) => port.comName))
-                if (err) reject(err);
+                    if (err) reject(err);
+                    resolve(ports.map((port) => port.comName));
                 });
         });
 }
@@ -127,7 +127,7 @@ function getPorts() {
 function createDevicesJSON() {
     return new Promise((resolve, reject) => {
         getPorts().then((ports) => {
-            var questions = [
+            let questions = [
                 {
                     type: 'list',
                     name: 'port',
@@ -161,7 +161,7 @@ function createDevicesJSON() {
             });
 
             resolve(deviceJSON);
-        });
+        }).catch((error) => console.error(error));
     });
 }
 
