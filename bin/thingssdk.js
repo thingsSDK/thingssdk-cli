@@ -5,7 +5,8 @@ const cliPackage = require("../package.json");
 
 const argv = require("yargs")
                 .version(cliPackage.version)
-                .command(require("./commands/new"))
+                .commandDir('commands')
                 .demand(1)
+                .strict()
                 .help()
                 .argv;

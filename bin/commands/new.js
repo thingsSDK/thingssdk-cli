@@ -218,16 +218,14 @@ function createDevicesJSON(runtime) {
  * Yargs required exports
  */
 
-exports.command  =  "new <path>";
+exports.command = "new <path>";
 
-exports.describe  =  'create an applicaiton at a given path';
+exports.describe = 'create an applicaiton at a given path';
 
-exports.builder  =  {
+exports.builder = {
     runtime: {
         default: "espruino"
     }
 };
 
-exports.handler  =  function  (argv)  {
-    createApplication(argv);
-};
+exports.handler = createApplication;
