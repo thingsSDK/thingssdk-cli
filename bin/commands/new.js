@@ -79,14 +79,35 @@ To upload to your device:
 }
 
 function createFiles(destinationPath, runtime, done) {
+    /**
+      If the first part of the path contains a ~,
+      we'll assume the user intends for their project to install
+      relative to their home directory on a Unix machine and throw an error.
+    */
+    if (destinationPath.split('/')[0].includes('~')) {
+      console.log(colors.error(`
+  Uh-oh, check your desired project path!
+  It looks like you made a reference to your home directory: ~/
+  Due to cross platform compatibility with non-Unix systems, that's causes some problems.
+  Try again using absolute paths like /Users/<your username>/path/to/project
+`))
+      throw new Error(`Bad path, we're sorry...`)
+    }
+
+    /**
+      If any other part of the path contains a ~,
+      we'll just give them a helpful warning.
+    */
     if (destinationPath.includes('~')) {
-      console.error(colors.error(('There\'s currently a bug with thingssdk that makes it impossible to use the ~/ as part of your desired project path. We\'re bailing out so that you don\'t have to run a scary command like `rm -rf \\~`')))
-      throw new Error('Bad path, it\'s our fault...')
+      console.log(colors.warn(`
+  Be careful, it looks like your project path contains a "~".
+  If you remove this directory, be very careful about running "rm -rf \\~"
+  You could accidentally destroy your home directory!
+  `))
     }
 
     const app_name = path.basename(path.resolve(destinationPath));
     mkdirp(destinationPath + "/scripts", (err) => {
-
         /* Copy templates */
         const templatesPath = path.join(__dirname, "..", "..", "templates");
         const scriptPath = path.join(templatesPath, runtime, "scripts");
