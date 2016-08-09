@@ -229,3 +229,7 @@ exports.builder = {
 };
 
 exports.handler = createApplication;
+
+exports.testFunctions = {
+  isDirectoryEmpty
+};
