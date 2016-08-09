@@ -79,6 +79,11 @@ To upload to your device:
 }
 
 function createFiles(destinationPath, runtime, done) {
+    if (destinationPath.includes('~')) {
+      console.error(colors.error(('There\'s currently a bug with thingssdk that makes it impossible to use the ~/ as part of your desired project path. We\'re bailing out so that you don\'t have to run a scary command like `rm -rf \\~`')))
+      throw new Error('Bad path, it\'s our fault...')
+    }
+
     const app_name = path.basename(path.resolve(destinationPath));
     mkdirp(destinationPath + "/scripts", (err) => {
 
