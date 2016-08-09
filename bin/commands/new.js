@@ -230,6 +230,6 @@ exports.builder = {
 
 exports.handler = createApplication;
 
-module.exports = {
+exports.testFunctions = {
   isDirectoryEmpty
 }

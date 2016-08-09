@@ -5,10 +5,11 @@ const fs = require("fs");
 
 /**
   Destructure any functions from commands/new for unit testing
+  XXX:jmf Note that the commands are pulled from (new.js).handler
 */
 const {
   isDirectoryEmpty
-} = require("../../bin/commands/new.js");
+} = require("../../bin/commands/new.js").testFunctions;
 
 describe("thingssdk new", () => {
 
