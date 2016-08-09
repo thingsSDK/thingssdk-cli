@@ -88,7 +88,7 @@ function createFiles(destinationPath, runtime, done) {
       console.log(colors.error(`
   Uh-oh, check your desired project path!
   It looks like you made a reference to your home directory: ~/
-  Due to cross platform compatibility with non-Unix systems, that's causes some problems.
+  Due to cross platform compatibility with non-Unix systems, that causes some problems.
   Try again using absolute paths like /Users/<your username>/path/to/project
 `))
       throw new Error(`Bad path, we're sorry...`)
