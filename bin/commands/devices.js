@@ -1,5 +1,10 @@
 'use strict';
 
+const createDevicesForJSON = require('../../lib/devices').createDevicesForJSON;
+const path = require("path");
+const write = require('../../lib/common').write;
+const colors = require('../../lib/colors.theme');
+
 /**
  * Yargs required exports
  */
@@ -14,6 +19,15 @@ exports.builder = {
     }
 };
 
-exports.handler =  function(argv)  {
-    console.log("TODO DEVICES COMMAND");
+exports.handler = function(argv, callback)  {
+    createDevicesForJSON(argv.port, argv.baud_rate, argv.runtime).then(devices => {
+        write(path.join(process.cwd(), "devices.json"), JSON.stringify(devices, null, 2));
+    }).then(() => {
+        console.log(colors.info("devices.json successfully created"));
+        if(typeof callback === 'function') callback();
+        else process.exit(0);
+    }).catch(err => {
+        console.error(colors.error(err));
+        process.exit(1);
+    });
 };

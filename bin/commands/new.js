@@ -1,8 +1,6 @@
 "use strict";
 const path = require("path");
 const fs = require("fs");
-const inquirer = require("inquirer");
-const serialport = require("serialport");
 const mkdirp = require("mkdirp");
 const exec = require("child_process").exec;
 const readLine = require("readline").createInterface({
@@ -10,14 +8,9 @@ const readLine = require("readline").createInterface({
     output: process.stdout
 });
 
-const colors = require("colors");
-colors.setTheme({
-    info: "green",
-    help: "cyan",
-    warn: "yellow",
-    debug: "blue",
-    error: "red"
-});
+const createDevicesJSON = require('../../lib/devices').createDevicesJSON;
+const write = require('../../lib/common').write;
+const colors = require('../../lib/colors.theme');
 
 const RUNTIMES = {
     espruino: "1.86"
@@ -41,7 +34,7 @@ function createApplication(argv) {
     const runtime = argv.runtime;
     isDirectoryEmpty(destinationPath, (isEmpty) => {
         if (isEmpty) {
-            createFiles(destinationPath, runtime, applicationFinished(destinationPath));
+            createFiles(argv, applicationFinished(destinationPath));
         } else if (!isEmpty) {
             readLine.question(`Files already exist at ${destinationPath}.
 Would you like to overwrite the existing files?
@@ -50,7 +43,7 @@ Type y or n: `, (answer) => {
                         case ("y" || "yes"):
                             console.log(colors.info("You answered yes. Overwriting existing project files."));
                             readLine.close();
-                            createFiles(destinationPath, runtime, applicationFinished(destinationPath));
+                            createFiles(argv, applicationFinished(destinationPath));
                             break;
                         case ("n" || "no"):
                             console.log(colors.warn("No project files were changed. Aborting new project creation."));
@@ -78,8 +71,11 @@ To upload to your device:
     };
 }
 
-function createFiles(destinationPath, runtime, done) {
+function createFiles(options, runtime, done) {
+    const {port, baud_rate} = options;
+    const destinationPath = options.path;
     const app_name = path.basename(path.resolve(destinationPath));
+
     mkdirp(destinationPath + "/scripts", (err) => {
 
         /* Copy templates */
@@ -96,19 +92,14 @@ function createFiles(destinationPath, runtime, done) {
         copy(path.join(templatesPath, 'main.js'), path.join(destinationPath, 'main.js'));
         copy(path.join(templatesPath, 'dot-gitignore'), path.join(destinationPath, '.gitignore'));
         /* Create devices.json and finish */
-        createDevicesJSON(runtime).then((devices) => {
+        createDevicesJSON(port, baud_rate, runtime).then(devices => {
             write(path.join(destinationPath, "devices.json"), JSON.stringify(devices, null, 2));
-            done();
-        }).catch((error) => console.error(error));
+        }).then(done).catch((error) => console.error(colors.error(error)));
     });
 }
 
 function copy(from, to) {
     write(to, fs.readFileSync(from));
-}
-
-function write(path, contents) {
-    fs.writeFileSync(path, contents);
 }
 
 function createPackageJSON(app_name, runtime) {
@@ -134,86 +125,6 @@ function createPackageJSON(app_name, runtime) {
     return pkg;
 }
 
-function clearLine() {
-    const CLEAR_LINE = new Buffer('1b5b304b', 'hex').toString();
-    const MOVE_LEFT = new Buffer('1b5b3130303044', 'hex').toString();
-    process.stdout.write(MOVE_LEFT + CLEAR_LINE);
-    process.stdout.write("");
-}
-
-function printLoading(message, loadingChar, count) {
-    let i = 0;
-    let interval = setInterval(() => {
-        if (i === 0) {
-            process.stdout.write(message);
-        }
-        process.stdout.write(loadingChar);
-        if (i > count) {
-            clearLine();
-            process.stdout.write(message);
-            i = 0;
-        }
-        i++;
-    }, 400);
-    return () => {
-        clearInterval(interval);
-        clearLine();
-    };
-}
-
-function getPorts() {
-    let clearDevicePrompt;
-    return new Promise(
-        (resolve, reject) => {
-            function portResolver(err, ports) {
-                if (err) reject(err);
-                const portNames = ports.map((port) => port.comName);
-                if (portNames.length > 0) {
-                    if(clearDevicePrompt) clearDevicePrompt();
-                    resolve(portNames);
-                } else {
-                    clearDevicePrompt = clearDevicePrompt || printLoading("Plug your device in", ".", 3);
-                    serialport.list(portResolver);
-                }
-            }
-            serialport.list(portResolver);
-        });
-}
-
-function createDevicesJSON(runtime) {
-    return getPorts().then((ports) => {
-        let questions = [
-            {
-                type: 'list',
-                name: 'port',
-                message: 'Select a port:',
-                choices: ports,
-                default: ports[0]
-            },
-            {
-                type: 'list',
-                name: 'baud_rate',
-                message: 'Select the baud rate:',
-                choices: ['9600', '115200'],
-                default: '115200'
-            }
-        ];
-
-        let deviceJSON = inquirer.prompt(questions).then(answers => {
-            const port = answers.port;
-            const baud_rate = parseInt(answers.baud_rate);
-            const devices = {};
-
-            devices[port] = { baud_rate, runtime };
-
-            return {devices};
-        });
-
-        return deviceJSON;
-    });
-}
-
-
 /**
  * Yargs required exports
  */
@@ -231,5 +142,5 @@ exports.builder = {
 exports.handler = createApplication;
 
 exports.testFunctions = {
-  isDirectoryEmpty
+    isDirectoryEmpty
 };
