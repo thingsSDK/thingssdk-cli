@@ -1,5 +1,9 @@
 # ThingsSDK CLI
 
+thingsSDK CLI is a command line utility for generating and managing modern projects for JavaScript microcontroller runtimes.
+
+Initial support is for Espruino with hopes to support others like Kinoma in the future.
+
 ## Install CLI
 
 ```bash
@@ -62,4 +66,17 @@ Or with the flags `port` and `baud_rate` if you know them already.
 
 ```
 $ thingssdk devices --port=COM3 --baud_rate=115200
+```
+
+This will generate a `devices.json` like this:
+
+```javascript
+{
+  "devices": {
+    "COM3": {
+      "baud_rate": 115200,
+      "runtime": "espruino"
+    }
+  }
+}
 ```
