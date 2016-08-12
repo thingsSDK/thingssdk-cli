@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "mocha --recursive",
-    "test:coverage": "istanbul cover --include-pid node_modules/mocha/bin/_mocha -- --recursive"
+    "combine-coverage": "node test/coverage/combine",
+    "test:coverage": "rimraf coverage && istanbul cover --report=none --print=none --include-pid node_modules/mocha/bin/_mocha -- --recursive && npm run combine-coverage"
   },
   "repository": {
     "type": "git",

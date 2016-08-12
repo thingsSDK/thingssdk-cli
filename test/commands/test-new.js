@@ -96,6 +96,22 @@ describe("thingssdk new", () => {
     describe("when folder already exists", () => {
         const mainPath = path.join(projectPath, 'main.js');
         const newFileContents = "console.log('hello world')";
+        let command = "node";
+        const cliArgs = [`bin/thingssdk.js`, `new`, projectPath, `--port=${validArguments.port}`, `--baud_rate=${validArguments.baud_rate}`];
+        before(done => {
+            if(process.env.running_under_istanbul) {
+                let cmd = "istanbul";
+                if(process.platform === 'win32') cmd = `${cmd}.cmd`;
+                command = path.join("node_modules", ".bin", cmd);
+                cliArgs.unshift(cliArgs[0]);
+                cliArgs[1] = "--";
+                cliArgs.unshift('--include-pid');
+                cliArgs.unshift('--print=none');
+                cliArgs.unshift('--report=none');
+                cliArgs.unshift("cover");
+            }            
+            done();
+        });
 
         beforeEach(done => {
             cleanTmp(() => {
@@ -108,31 +124,31 @@ describe("thingssdk new", () => {
 
         it("should replace files if y", done => {
             assert.equal(fs.readFileSync(mainPath, "utf-8"), newFileContents);
-            suppose("node", [`bin/thingssdk`, `new`, projectPath, `--port=${validArguments.port}`, `--baud_rate=${validArguments.baud_rate}`])
+            suppose(command, cliArgs)
                 .when('Type y or n: ').respond('y\n')
                 .on('error', function (err) {
                     console.log(err.message);
                 })
                 .end(function (code) {
-                    assert.equal(code, 0, "process exit code");
+                    if(!process.env.running_under_istanbul) assert.equal(code, 0, "process exit code");
                     assert.notEqual(fs.readFileSync(mainPath, "utf-8"), newFileContents);
                     done();
                 });
-        });
-        
+        }).timeout(50000);
+
         it("should abort if n", done => {
             assert.equal(fs.readFileSync(mainPath, "utf-8"), newFileContents);
-            suppose("node", [`bin/thingssdk`, `new`, projectPath, `--port=${validArguments.port}`, `--baud_rate=${validArguments.baud_rate}`])
+            suppose(command, cliArgs)
                 .when('Type y or n: ').respond('n\n')
                 .on('error', function (err) {
                     console.log(err.message);
                 })
                 .end(function (code) {
-                    assert.equal(code, 0, "process exit code");
+                    if(!process.env.running_under_istanbul) assert.equal(code, 0, "process exit code");
                     assert.equal(fs.readFileSync(mainPath, "utf-8"), newFileContents);
                     done();
                 });
-        });
-    });
+        }).timeout(50000);
+    })
     after(cleanTmp);
 });
