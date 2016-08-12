@@ -14,6 +14,12 @@ describe("thingssdk devices", () => {
     runtime: "espruino"
   };
 
+  const otherValidArguments = {
+    port: "COM3", 
+    runtime: "espruino",
+    baud_rate: 9600
+  };
+
   const deviceCheckPath = "tmp/devices-json-check";
 
   before(done => {
@@ -34,6 +40,27 @@ describe("thingssdk devices", () => {
             COM7: {
               runtime: "espruino",
               baud_rate: 115200
+            }
+          }
+        };
+        assert.deepEqual(devices, expectedJson, "devices.json didn't match expectedJson");
+        process.chdir("../..");
+        done();
+      });
+    });
+  });
+
+
+  it("should create a `devices.json` in the correct folder with different params", (done) => {
+    mkdirp(deviceCheckPath, (err) => {
+      process.chdir(deviceCheckPath);
+      devicesCommand(otherValidArguments, () => {
+        const devices = JSON.parse(fs.readFileSync("./devices.json"));
+        const expectedJson = {
+          devices: {
+            COM3: {
+              runtime: "espruino",
+              baud_rate: 9600
             }
           }
         };
