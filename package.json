@@ -7,7 +7,8 @@
     "thingssdk": "./bin/thingssdk.js"
   },
   "scripts": {
-    "test": "mocha --recursive"
+    "test": "mocha --recursive",
+    "test:coverage": "istanbul cover node_modules/mocha/bin/_mocha -- --recursive"
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,8 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "mocha": "^3.0.2"
+    "istanbul": "^0.4.4",
+    "mocha": "^3.0.2",
+    "rimraf": "^2.5.4"
   }
 }

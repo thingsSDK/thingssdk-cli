@@ -10,8 +10,56 @@ Note that this project uses [serialport](https://github.com/EmergingTechnologyAd
 
 ## Usage
 
-Plug your device in first. You'll need to pick the port you're using to generate the `devices.json` file.
+Plug your device in first and make sure you have the necessary drivers installed.
+
+### New Project
+
+Next to create a new project use the `new` command like so:
 
 ```bash
 $ thingssdk new path/to/project_name
+```
+
+You'll be prompted to enter plug your device in if you haven't already and then select the device's serial port and baud rate.
+
+If you know your device's port and baud rate already, use the `port` and `baud_rate` options:
+
+```bash
+$ thingssdk new path/to/project_name --port=COM3 --baud_rate=115200
+```
+
+### Getting Started with Your New Project
+
+Your new project will now be found at `path/to/project_name`. You'll need to then install the dependencies.
+
+```bash
+$ npm install
+```
+
+`dependencies` in the new project `package.json` should be deployed to the device, `devDependancies` are what are used for your development workflow.
+
+A `devices.json` file is created in the root of your new project. An entry is placed in your `.gitignore` because serial ports from computer to computer and developer to developer will differ.
+
+### Deploying it to Your Device
+
+To run the "Hello, world" sample project to your device(s) run the npm script `push`.
+
+```bash
+$ npm run push
+```
+
+The "Hello, world" script can be found in `main.js`. This script gets uploaded to your device and blinks the blue LED on the `ESP8266` board. It uses the `devices.json` file to know which devices to deploy the code to.
+
+### Creating a `devices.json` file
+
+To overwrite the current devices.json or create a new devices.json file in your project directory run the following command for an interactive prompt:
+
+```bash 
+$ thingssdk devices
+```
+
+Or with the flags `port` and `baud_rate` if you know them already.
+
+```
+$ thingssdk devices --port=COM3 --baud_rate=115200
 ```
