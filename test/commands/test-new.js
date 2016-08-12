@@ -7,6 +7,12 @@ const rmdir = require('rimraf');
 const fs = require('fs');
 const path = require('path');
 
+function cleanTmp(done) {
+    rmdir('tmp', function (error) {
+        done();
+    });
+}
+
 describe("thingssdk new", () => {
     const projectPath = "tmp/folder/to/project_name";
 
@@ -18,13 +24,7 @@ describe("thingssdk new", () => {
             path: projectPath
         };
 
-        before(done => {
-            rmdir(projectPath, function (error) {
-                mkdirp(projectPath, (err) => {
-                    done();
-                });
-            });
-        });
+        before(cleanTmp);
 
         it("should create a devices.json", done => {
             newCommand(validArguments, () => {
@@ -43,7 +43,7 @@ describe("thingssdk new", () => {
         });
 
         it("should create a properly structured package.json", done => {
-            const devices = JSON.parse(fs.readFileSync(path.join(projectPath, "package.json")));
+            const pkgJSON = JSON.parse(fs.readFileSync(path.join(projectPath, "package.json")));
             const expectedJson = {
                 name: "project_name",
                 version: '0.0.0',
@@ -61,15 +61,35 @@ describe("thingssdk new", () => {
                     espruino: "1.86"
                 }
             };
-            assert.deepEqual(devices, expectedJson, "package.json didn't match expectedJson");
+            assert.deepEqual(pkgJSON, expectedJson, "package.json didn't match expectedJson");
             done();
         });
 
-        after(done => {
-            rmdir(projectPath, function (error) {
-                done();
+        it("should copy the correct files", done => {
+            const templatesPath = path.join(__dirname, "..", "..", "templates");
+            const files = [
+                {
+                    source: path.join(templatesPath, "dot-gitignore"),
+                    dest: path.join(projectPath, ".gitignore")
+                },
+                {
+                    source: path.join(templatesPath, "main.js"),
+                    dest: path.join(projectPath, "main.js")
+                },
+                {
+                    source: path.join(templatesPath, validArguments.runtime, "scripts", "push.js"),
+                    dest: path.join(projectPath, "scripts", "push.js")
+                },
+
+            ];
+            files.forEach(file => {
+                const fileSourceContents = fs.readFileSync(file.source, "utf-8");
+                const fileDestinationContents = fs.readFileSync(file.dest, "utf-8");
+                assert.equal(fileSourceContents, fileDestinationContents, `file contetnts for ${file.dest} didn't match ${file.source}`);
             });
+            done();
         });
+
+        after(cleanTmp);
     });
-    xit("should create the correct files");
 });
