@@ -5,23 +5,20 @@ const path = require("path");
 const mkdirp = require("mkdirp");
 const fs = require("fs");
 
-const {
-    isDirectoryEmpty
-} = require("../../lib/file");
+const {isDirectoryEmpty} = require("../../lib/core/file");
 
 describe("function isDirectoryEmpty()", () => {
-    it("should throw an error if given no path", () => {
-        /**
-          XXX:jmf if this syntax looks weird, see:
-          http://chaijs.com/api/bdd/#method_throw
-        */
-        const runWithoutPath = () => isDirectoryEmpty();
-        expect(runWithoutPath).to.throw(Error);
+    it("should throw an error if given no path", (done) => {
+        isDirectoryEmpty().catch(err => {
+          expect(err).to.be.a('Error');
+          done();
+        });
+        
     });
 
     it("should return false if any files are present in the given directory", (done) => {
         /**
-          An arbitrary directory that we know isn"t empty
+          An arbitrary directory that we know isn't empty
         */
         const thisDirectory = path.resolve(__dirname);
 
@@ -42,7 +39,7 @@ describe("function isDirectoryEmpty()", () => {
             done();
         };
 
-        isDirectoryEmpty(thisDirectory, callback);
+        isDirectoryEmpty(thisDirectory).then(callback);
     });
 
     it("should return true if the given directory is empty", (done) => {
@@ -72,6 +69,6 @@ describe("function isDirectoryEmpty()", () => {
             done();
         };
 
-        isDirectoryEmpty(emptyDirectory, callback);
+        isDirectoryEmpty(emptyDirectory).then(callback);
     });
 });
