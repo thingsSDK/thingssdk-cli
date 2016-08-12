@@ -7,7 +7,7 @@ const rmdir = require('rimraf');
 const fs = require('fs');
 
 describe("thingssdk devices", () => {
-  describe("valid arguments", () => {
+  describe("with valid arguments", () => {
     const validArguments = {
       port: "COM7",
       baud_rate: "115200",
