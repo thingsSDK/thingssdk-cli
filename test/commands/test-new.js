@@ -6,6 +6,7 @@ const newCommand = require("../../lib/commands/new").handler;
 const rmdir = require('rimraf');
 const fs = require('fs');
 const path = require('path');
+const suppose = require("suppose");
 
 function cleanTmp(done) {
     rmdir('tmp', function (error) {
@@ -16,14 +17,14 @@ function cleanTmp(done) {
 describe("thingssdk new", () => {
     const projectPath = "tmp/folder/to/project_name";
 
-    describe("with valid arguments", () => {
-        const validArguments = {
-            port: "COM7",
-            baud_rate: "115200",
-            runtime: "espruino",
-            path: projectPath
-        };
+    const validArguments = {
+        port: "COM7",
+        baud_rate: "115200",
+        runtime: "espruino",
+        path: projectPath
+    };
 
+    describe("with valid arguments", () => {
         before(cleanTmp);
 
         it("should create a devices.json", done => {
@@ -90,6 +91,48 @@ describe("thingssdk new", () => {
             done();
         });
 
-        after(cleanTmp);
     });
+
+    describe("when folder already exists", () => {
+        const mainPath = path.join(projectPath, 'main.js');
+        const newFileContents = "console.log('hello world')";
+
+        beforeEach(done => {
+            cleanTmp(() => {
+                newCommand(validArguments, () => {
+                    fs.writeFileSync(mainPath, newFileContents);
+                    done();
+                });
+            });
+        });
+
+        it("should replace files if y", done => {
+            assert.equal(fs.readFileSync(mainPath, "utf-8"), newFileContents);
+            suppose("node", [`bin/thingssdk`, `new`, projectPath, `--port=${validArguments.port}`, `--baud_rate=${validArguments.baud_rate}`])
+                .when('Type y or n: ').respond('y\n')
+                .on('error', function (err) {
+                    console.log(err.message);
+                })
+                .end(function (code) {
+                    assert.equal(code, 0, "process exit code");
+                    assert.notEqual(fs.readFileSync(mainPath, "utf-8"), newFileContents);
+                    done();
+                });
+        });
+        
+        it("should abort if n", done => {
+            assert.equal(fs.readFileSync(mainPath, "utf-8"), newFileContents);
+            suppose("node", [`bin/thingssdk`, `new`, projectPath, `--port=${validArguments.port}`, `--baud_rate=${validArguments.baud_rate}`])
+                .when('Type y or n: ').respond('n\n')
+                .on('error', function (err) {
+                    console.log(err.message);
+                })
+                .end(function (code) {
+                    assert.equal(code, 0, "process exit code");
+                    assert.equal(fs.readFileSync(mainPath, "utf-8"), newFileContents);
+                    done();
+                });
+        });
+    });
+    after(cleanTmp);
 });
