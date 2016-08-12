@@ -11,9 +11,9 @@ const fs = require("fs");
 */
 const {
   isDirectoryEmpty
-} = require("../../bin/commands/new.js").testFunctions;
+} = require("../../lib/commands/new").testFunctions;
 
-const createApplication = require("../../bin/commands/new.js").handler;
+const createApplication = require("../../lib/commands/new").handler;
 
 describe("thingssdk new", () => {
 

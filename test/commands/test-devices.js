@@ -2,7 +2,7 @@
 
 const assert = require('chai').assert;
 const mkdirp = require('mkdirp');
-const devicesCommand = require('../../bin/commands/devices').handler;
+const devicesCommand = require('../../lib/commands/devices').handler;
 const rmdir = require('rimraf');
 const fs = require('fs');
 
