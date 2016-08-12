@@ -1,5 +1,7 @@
 # ThingsSDK CLI
 
+[![Build Status](https://travis-ci.org/thingsSDK/thingssdk-cli.svg?branch=master)](https://travis-ci.org/thingsSDK/thingssdk-cli)
+
 thingsSDK CLI is a command line utility for generating and managing modern projects for JavaScript microcontroller runtimes.
 
 Initial support is for Espruino with hopes to support others like Kinoma in the future.
