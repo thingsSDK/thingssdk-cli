@@ -42,6 +42,28 @@ describe("thingssdk new", () => {
             });
         });
 
+        it("should create a properly structured package.json", done => {
+            const devices = JSON.parse(fs.readFileSync(path.join(projectPath, "package.json")));
+            const expectedJson = {
+                name: "project_name",
+                version: '0.0.0',
+                private: true,
+                main: 'main.js',
+                scripts: {
+                    push: "node ./scripts/push"
+                },
+                devDependencies: {
+                    //TODO: REPLACE WITH LIVE VERSIONS WHEN RELEASED @chalkers
+                    "thingssdk-deployer": "github:thingssdk/thingssdk-deployer",
+                    "thingssdk-espruino-strategy": "github:thingssdk/thingssdk-espruino-strategy"
+                },
+                engines: {
+                    espruino: "1.86"
+                }
+            };
+            assert.deepEqual(devices, expectedJson, "package.json didn't match expectedJson");
+            done();
+        });
 
         after(done => {
             rmdir(projectPath, function (error) {
@@ -50,5 +72,4 @@ describe("thingssdk new", () => {
         });
     });
     xit("should create the correct files");
-    xit("should create a properly structured package.json");
 });
