@@ -58,12 +58,12 @@ describe("function getPorts()", () => {
     it("should eventually return ports once they're plugged in", done => {
         //Initially there's no ports [], then COM7 get's plugged in
         const calls = [[], [{ comName: "COM7" }]];
-        
+        let callBackTime = 0;
         const getPorts = proxyquire('../../lib/core/ports', {
             'serialport': {
                 list: (callback) => {
                     const ports = calls.shift();
-                    callback(null, ports);
+                    setTimeout(() => callback(null, ports), callBackTime+=1200);
                 }
             }
         }).getPorts;
@@ -75,6 +75,6 @@ describe("function getPorts()", () => {
             assert.isNull(err);
             done();
         });
-    });
+    }).timeout(4000);
 
 });
