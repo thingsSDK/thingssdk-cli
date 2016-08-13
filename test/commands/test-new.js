@@ -130,7 +130,7 @@ describe("thingssdk new", () => {
                     console.log(err.message);
                 })
                 .end(function (code) {
-                    if(!process.env.running_under_istanbul) assert.equal(code, 0, "process exit code");
+                    assert.equal(code, 0, "process exit code");
                     assert.notEqual(fs.readFileSync(mainPath, "utf-8"), newFileContents);
                     done();
                 });
@@ -144,11 +144,11 @@ describe("thingssdk new", () => {
                     console.log(err.message);
                 })
                 .end(function (code) {
-                    if(!process.env.running_under_istanbul) assert.equal(code, 0, "process exit code");
+                    assert.equal(code, 0, "process exit code");
                     assert.equal(fs.readFileSync(mainPath, "utf-8"), newFileContents);
                     done();
                 });
         }).timeout(50000);
-    })
+    });
     after(cleanTmp);
 });

@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "mocha --recursive",
-    "combine-coverage": "node test/coverage/combine",
+    "combine-coverage": "node scripts/coverage/combine",
     "test:coverage": "rimraf coverage && istanbul cover --report=none --print=none --include-pid node_modules/mocha/bin/_mocha -- --recursive && npm run combine-coverage"
   },
   "repository": {
@@ -38,6 +38,7 @@
     "chai": "^3.5.0",
     "istanbul": "^0.4.4",
     "mocha": "^3.0.2",
+    "proxyquire": "^1.7.10",
     "rimraf": "^2.5.4",
     "suppose": "^0.6.1"
   }
