@@ -97,7 +97,7 @@ describe("thingssdk new", () => {
         const mainPath = path.join(projectPath, 'main.js');
         const newFileContents = "console.log('hello world')";
         let command = "node";
-        const cliArgs = [`bin/thingssdk.js`, `new`, projectPath, `--port=${validArguments.port}`, `--baud_rate=${validArguments.baud_rate}`];
+        let cliArgs = [`bin/thingssdk.js`, `new`, projectPath, `--port=${validArguments.port}`, `--baud_rate=${validArguments.baud_rate}`];
         before(done => {
             if(process.env.running_under_istanbul) {
                 let cmd = "istanbul";
@@ -105,10 +105,7 @@ describe("thingssdk new", () => {
                 command = path.join("node_modules", ".bin", cmd);
                 cliArgs.unshift(cliArgs[0]);
                 cliArgs[1] = "--";
-                cliArgs.unshift('--include-pid');
-                cliArgs.unshift('--print=none');
-                cliArgs.unshift('--report=none');
-                cliArgs.unshift("cover");
+                cliArgs = ['cover', '--report=none', '--print=none','--include-pid'].concat(cliArgs);
             }            
             done();
         });
