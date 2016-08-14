@@ -2,7 +2,7 @@
 
 const assert = require('chai').assert;
 const mkdirp = require('mkdirp');
-const newCommand = require("../../lib/commands/new").handler;
+const {createApplication: newCommand} = require("../../lib/new");
 const rmdir = require('rimraf');
 const fs = require('fs');
 const path = require('path');
@@ -28,7 +28,7 @@ describe("thingssdk new", () => {
         before(cleanTmp);
 
         it("should create a devices.json", done => {
-            newCommand(validArguments, () => {
+            newCommand(validArguments).then(() => {
                 const devices = JSON.parse(fs.readFileSync(path.join(projectPath, "devices.json")));
                 const expectedJson = {
                     devices: {
@@ -112,7 +112,7 @@ describe("thingssdk new", () => {
 
         beforeEach(done => {
             cleanTmp(() => {
-                newCommand(validArguments, () => {
+                newCommand(validArguments).then(() => {
                     fs.writeFileSync(mainPath, newFileContents);
                     done();
                 });
@@ -142,6 +142,20 @@ describe("thingssdk new", () => {
                 })
                 .end(function (code) {
                     assert.equal(code, 0, "process exit code");
+                    assert.equal(fs.readFileSync(mainPath, "utf-8"), newFileContents);
+                    done();
+                });
+        }).timeout(50000);
+
+        it("should abort and error if y or n not pressent", done => {
+            assert.equal(fs.readFileSync(mainPath, "utf-8"), newFileContents);
+            suppose(command, cliArgs)
+                .when('Type y or n: ').respond('please don\'t\n')
+                .on('error', function (err) {
+                    console.log(err.message);
+                })
+                .end(function (code) {
+                    assert.equal(code, 1, "process exit code");
                     assert.equal(fs.readFileSync(mainPath, "utf-8"), newFileContents);
                     done();
                 });
