@@ -2,6 +2,9 @@ language: node_js
 node_js:
   - "6"
 
+install:
+  - npm install --dev
+
 script:
   - npm run ci
 
