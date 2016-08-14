@@ -8,9 +8,9 @@
   },
   "scripts": {
     "test": "mocha --recursive",
-    "combine-coverage": "node scripts/coverage/combine",
+    "combine-coverage": "node ./scripts/coverage/combine",
     "test:coverage": "rimraf coverage && istanbul cover --report=none --print=none --include-pid node_modules/mocha/bin/_mocha -- --recursive && npm run combine-coverage",
-    "ci": "npm run test:coverage && codecov --name coverage/coverage-*.json"
+    "ci": "npm run test:coverage && codecov -f coverage/coverage-*.json"
   },
   "repository": {
     "type": "git",
