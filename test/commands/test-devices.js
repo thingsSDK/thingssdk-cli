@@ -2,12 +2,13 @@
 
 const assert = require('chai').assert;
 const mkdirp = require('mkdirp');
-const rmdir = require('rimraf');
 const proxyquire = require('proxyquire');
+const suppose = require("suppose");
 
 const fs = require('fs');
 const path = require('path');
 
+const {prepCommand, cleanTmp} = require('./helper');
 const {createDevicesJSON: devicesCommand} = require('../../lib/devices');
 
 describe("thingssdk devices", () => {
@@ -36,7 +37,7 @@ describe("thingssdk devices", () => {
 
 
     before(done => {
-      rmdir(checkDevicesPath, function (error) {
+      cleanTmp(() => {
         mkdirp(checkDevicesPath, (err) => {
           done();
         });
@@ -80,6 +81,26 @@ describe("thingssdk devices", () => {
       });
     });
 
+    it("should exit correctly when correct aguments are passed", done => {
+      let command = "node";
+      let cliArgs = [`bin/thingssdk.js`, `devices`, `--port=COM5`, `--baud_rate=115200`];
+      const devicesJSONPath = path.join(checkDevicesPath, 'devices.json');
+      // process.chdir(checkDevicesPath);
+      // suppose(command, cliArgs)
+      //   .on('error', function (err) {
+      //     console.log(err.message);
+      //   })
+      //   .end(function (code) {
+      //     assert.equal(code, 0, "process exit code");
+      //     const devicesJSON = JSON.parse(fs.readFileSync(devicesJSONPath, "utf-8"));
+      //     assert.equal(devicesJSON.COM.runtime, "espruino");
+      //     assert.equal(devicesJSON.COM.baud_rate, 115200);
+      //     process.chdir('../..');
+      //     done();
+      //   });
+      done()
+    });
+
     it("should ask for port and baud rate if missing from arguments", done => {
       const {createDevicesJSON: devicesCommand} = proxyquire('../../lib/devices', {
         "./core/ports": {
@@ -118,10 +139,6 @@ describe("thingssdk devices", () => {
 
     });
 
-    after(done => {
-      rmdir(checkDevicesPath, function (error) {
-        done();
-      });
-    });
+    after(cleanTmp);
   });
 });

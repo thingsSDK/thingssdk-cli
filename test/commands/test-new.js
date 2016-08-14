@@ -3,16 +3,10 @@
 const assert = require('chai').assert;
 const mkdirp = require('mkdirp');
 const {createApplication: newCommand} = require("../../lib/new");
-const rmdir = require('rimraf');
 const fs = require('fs');
 const path = require('path');
 const suppose = require("suppose");
-
-function cleanTmp(done) {
-    rmdir('tmp', function (error) {
-        done();
-    });
-}
+const {prepCommand, cleanTmp} = require('./helper');
 
 describe("thingssdk new", () => {
     const projectPath = "tmp/folder/to/project_name";
@@ -98,15 +92,11 @@ describe("thingssdk new", () => {
         const newFileContents = "console.log('hello world')";
         let command = "node";
         let cliArgs = [`bin/thingssdk.js`, `new`, projectPath, `--port=${validArguments.port}`, `--baud_rate=${validArguments.baud_rate}`];
+
         before(done => {
-            if(process.env.running_under_istanbul) {
-                let cmd = "istanbul";
-                if(process.platform === 'win32') cmd = `${cmd}.cmd`;
-                command = path.join("node_modules", ".bin", cmd);
-                cliArgs.unshift(cliArgs[0]);
-                cliArgs[1] = "--";
-                cliArgs = ['cover', '--report=none', '--print=none','--include-pid'].concat(cliArgs);
-            }            
+            const preparedCommand = prepCommand(command, cliArgs);
+            command = preparedCommand.command;
+            cliArgs = preparedCommand.cliArgs;
             done();
         });
 
@@ -131,7 +121,7 @@ describe("thingssdk new", () => {
                     assert.notEqual(fs.readFileSync(mainPath, "utf-8"), newFileContents);
                     done();
                 });
-        }).timeout(50000);
+        }).timeout(5000);
 
         it("should abort if n", done => {
             assert.equal(fs.readFileSync(mainPath, "utf-8"), newFileContents);
@@ -145,7 +135,7 @@ describe("thingssdk new", () => {
                     assert.equal(fs.readFileSync(mainPath, "utf-8"), newFileContents);
                     done();
                 });
-        }).timeout(50000);
+        }).timeout(5000);
 
         it("should abort and error if y or n not pressent", done => {
             assert.equal(fs.readFileSync(mainPath, "utf-8"), newFileContents);
@@ -159,7 +149,40 @@ describe("thingssdk new", () => {
                     assert.equal(fs.readFileSync(mainPath, "utf-8"), newFileContents);
                     done();
                 });
-        }).timeout(50000);
+        }).timeout(5000);
     });
+
+    describe("if arguments with tildas in the path are passed", () => {
+        it("should error if tilda is used at the start of path and no project created", done => {
+            const examplePath = "~/example";
+            newCommand({
+                path: examplePath, 
+                port: "COM7",
+                baud_rate: "115200",
+                runtime: "espruino"
+            }).catch((err) => {
+                assert.isNotNull(err);
+                // package.json shouldn't be there, i.e. project not created
+                assert.throws(() => fs.readFileSync(path.join(examplePath, "package.json"))); 
+                done();
+            });
+        });
+
+        it("should create project if it's in the middle of the path", done => {
+            const examplePath = "tmp/~/example";
+            newCommand({
+                path: examplePath, 
+                port: "COM7",
+                baud_rate: "115200",
+                runtime: "espruino"
+            }).then(() => {
+                // Check that the package.json is created i.e. project created
+                const packageJSON = JSON.parse(fs.readFileSync(path.join(examplePath, "package.json")));
+                assert.equal(packageJSON.name, "example"); 
+                done();
+            });
+        });
+    });
+
     after(cleanTmp);
 });
