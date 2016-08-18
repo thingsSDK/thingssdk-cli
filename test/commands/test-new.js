@@ -68,6 +68,10 @@ describe("thingssdk new", () => {
                     dest: path.join(projectPath, ".gitignore")
                 },
                 {
+                    source: path.join(templatesPath, "dot-gitattributes"),
+                    dest: path.join(projectPath, ".gitattributes")
+                },
+                {
                     source: path.join(templatesPath, "main.js"),
                     dest: path.join(projectPath, "main.js")
                 },
@@ -156,14 +160,14 @@ describe("thingssdk new", () => {
         it("should error if tilda is used at the start of path and no project created", done => {
             const examplePath = "~/example";
             newCommand({
-                path: examplePath, 
+                path: examplePath,
                 port: "COM7",
                 baud_rate: "115200",
                 runtime: "espruino"
             }).catch((err) => {
                 assert.isNotNull(err);
                 // package.json shouldn't be there, i.e. project not created
-                assert.throws(() => fs.readFileSync(path.join(examplePath, "package.json"))); 
+                assert.throws(() => fs.readFileSync(path.join(examplePath, "package.json")));
                 done();
             });
         });
@@ -171,14 +175,14 @@ describe("thingssdk new", () => {
         it("should create project if it's in the middle of the path", done => {
             const examplePath = "tmp/~/example";
             newCommand({
-                path: examplePath, 
+                path: examplePath,
                 port: "COM7",
                 baud_rate: "115200",
                 runtime: "espruino"
             }).then(() => {
                 // Check that the package.json is created i.e. project created
                 const packageJSON = JSON.parse(fs.readFileSync(path.join(examplePath, "package.json")));
-                assert.equal(packageJSON.name, "example"); 
+                assert.equal(packageJSON.name, "example");
                 done();
             });
         });
