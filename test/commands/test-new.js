@@ -45,7 +45,8 @@ describe("thingssdk new", () => {
                 private: true,
                 main: 'main.js',
                 scripts: {
-                    push: "node ./scripts/push"
+                    push: "node ./scripts/push && npm run repl",
+                    repl: "node ./scripts/repl"
                 },
                 devDependencies: {
                     //TODO: REPLACE WITH LIVE VERSIONS WHEN RELEASED @chalkers
