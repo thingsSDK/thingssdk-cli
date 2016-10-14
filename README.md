@@ -16,8 +16,7 @@ $ npm install thingssdk/thingssdk-cli -g
 Note that this project uses [serialport](https://github.com/EmergingTechnologyAdvisors/node-serialport), which compiles to binary. You might need to install some prerequesites depending on your operating system.
 
 ## Prerequisites
-Make sure prior to trying to push a project to your device, you install and flash the device with this repo:
-https://github.com/thingsSDK/flasher.js
+Make sure prior to trying to push a project to your device, you flash the device with the Espruino Runtime with [Flasher.js](https://github.com/thingsSDK/flasher.js/releases).
 
 ## Usage
 
