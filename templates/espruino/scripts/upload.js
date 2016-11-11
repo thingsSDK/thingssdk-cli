@@ -1,4 +1,8 @@
 'use strict';
+const env = process.argv[2];
+
+if(!env) throw Error('Environment not present. Please use development or production.');
+
 const path = require('path');
 const deployer = require('thingssdk-deployer')();
 

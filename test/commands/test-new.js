@@ -45,7 +45,8 @@ describe("thingssdk new", () => {
                 private: true,
                 main: 'main.js',
                 scripts: {
-                    push: "node ./scripts/push && npm run repl",
+                    dev: "node ./scripts/upload development && npm run repl",
+                    deploy: "node ./scripts/upload production",
                     repl: "node ./scripts/repl"
                 },
                 devDependencies: {
@@ -54,7 +55,7 @@ describe("thingssdk new", () => {
                     "thingssdk-espruino-strategy": "github:thingssdk/thingssdk-espruino-strategy"
                 },
                 engines: {
-                    espruino: "1.86"
+                    espruino: "1.88"
                 }
             };
             assert.deepEqual(pkgJSON, expectedJson, "package.json didn't match expectedJson");
@@ -77,8 +78,8 @@ describe("thingssdk new", () => {
                     dest: path.join(projectPath, "main.js")
                 },
                 {
-                    source: path.join(templatesPath, validArguments.runtime, "scripts", "push.js"),
-                    dest: path.join(projectPath, "scripts", "push.js")
+                    source: path.join(templatesPath, validArguments.runtime, "scripts", "upload.js"),
+                    dest: path.join(projectPath, "scripts", "upload.js")
                 },
 
             ];
