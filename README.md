@@ -52,13 +52,21 @@ A `devices.json` file is created in the root of your new project. An entry is pl
 
 ### Deploying it to Your Device
 
-To run the "Hello, world" sample project to your device(s) run the npm script `push`.
+To run the "Hello, world" sample project to your device(s) run the npm script `dev`.
 
 ```bash
-$ npm run push
+$ npm run dev
+```
+
+An interactive REPL will launch and you can interact with your code and debug your program. Once you're happy you can use `delpoy` to upload and __save__ your code to the device.
+
+```bash
+$ npm run deploy
 ```
 
 The "Hello, world" script can be found in `main.js`. This script gets uploaded to your device and blinks the blue LED on the `ESP8266` board. It uses the `devices.json` file to know which devices to deploy the code to.
+
+Your JavaScript program must implement a `main` function in order to be ran when the board is initialized.
 
 ### Creating a `devices.json` file
 
