@@ -13,7 +13,8 @@ const devices = require('../devices.json').devices;
 const scriptsDir = path.dirname(require.main.filename);
 const payload = {
     entry: iotPackageJson.main,
-    buildDir: path.join(scriptsDir, '..', 'build')
+    buildDir: path.join(scriptsDir, '..', 'build'),
+    env
 };
 
 deployer.prepare(devices, payload);
