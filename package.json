@@ -32,7 +32,7 @@
     "inquirer": "^1.1.2",
     "mkdirp": "^0.5.1",
     "serialport": "^4.0.1",
-    "yargs": "^4.7.1"
+    "yargs": "^6.3.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
