@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/thingsSDK/thingssdk-cli.svg?branch=master)](https://travis-ci.org/thingsSDK/thingssdk-cli) 
 [![codecov](https://codecov.io/gh/thingsSDK/thingssdk-cli/branch/master/graph/badge.svg)](https://codecov.io/gh/thingsSDK/thingssdk-cli)
+[![Dependency Status](https://david-dm.org/thingssdk/thingssdk-cli.svg)](https://david-dm.org/thingssdk/thingssdk-cli)
+[![devDependency Status](https://david-dm.org/thingssdk/thingssdk-cli/dev-status.svg)](https://david-dm.org/thingssdk/thingssdk-cli#info=devDependencies)
 
 thingsSDK CLI is a command line utility for generating and managing modern projects for JavaScript microcontroller runtimes.
 
