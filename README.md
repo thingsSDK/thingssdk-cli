@@ -12,7 +12,7 @@ Initial support is for Espruino with hopes to support others like Kinoma in the 
 ## Install CLI
 
 ```bash
-$ npm install thingssdk/thingssdk-cli -g
+$ npm install thingssdk-cli -g
 ```
 
 Note that this project uses [serialport](https://github.com/EmergingTechnologyAdvisors/node-serialport), which compiles to binary. You might need to install some prerequesites depending on your operating system.
