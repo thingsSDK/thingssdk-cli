@@ -158,8 +158,8 @@ describe("thingssdk new", () => {
         }).timeout(5000);
     });
 
-    describe("if arguments with tildas in the path are passed", () => {
-        it("should error if tilda is used at the start of path and no project created", done => {
+    describe("if arguments with tildes in the path are passed", () => {
+        it("should error if tilde is used at the start of path and no project created", done => {
             const examplePath = "~/example";
             newCommand({
                 path: examplePath,
