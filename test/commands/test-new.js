@@ -51,8 +51,8 @@ describe("thingssdk new", () => {
                 },
                 devDependencies: {
                     //TODO: REPLACE WITH LIVE VERSIONS WHEN RELEASED @chalkers
-                    "thingssdk-deployer": "github:thingssdk/thingssdk-deployer",
-                    "thingssdk-espruino-strategy": "github:thingssdk/thingssdk-espruino-strategy"
+                    "thingssdk-deployer": "1.0.0",
+                    "thingssdk-espruino-strategy": "1.0.0"
                 },
                 engines: {
                     espruino: "1.88"
