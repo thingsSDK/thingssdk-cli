@@ -50,12 +50,11 @@ describe("thingssdk new", () => {
                     repl: "node ./scripts/repl"
                 },
                 devDependencies: {
-                    //TODO: REPLACE WITH LIVE VERSIONS WHEN RELEASED @chalkers
-                    "thingssdk-deployer": "1.0.0",
-                    "thingssdk-espruino-strategy": "1.0.0"
+                    "thingssdk-deployer": "~1.0.0",
+                    "thingssdk-espruino-strategy": "~1.0.1"
                 },
                 engines: {
-                    espruino: "1.88"
+                    espruino: "1.89"
                 }
             };
             assert.deepEqual(pkgJSON, expectedJson, "package.json didn't match expectedJson");
