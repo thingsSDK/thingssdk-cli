@@ -1,4 +1,4 @@
-# ThingsSDK CLI
+# thingsSDK CLI
 
 [![Build Status](https://travis-ci.org/thingsSDK/thingssdk-cli.svg?branch=master)](https://travis-ci.org/thingsSDK/thingssdk-cli) 
 [![codecov](https://codecov.io/gh/thingsSDK/thingssdk-cli/branch/master/graph/badge.svg)](https://codecov.io/gh/thingsSDK/thingssdk-cli)
