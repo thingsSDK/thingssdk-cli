@@ -29,14 +29,14 @@
   "homepage": "https://github.com/thingsSDK/thingssdk-cli#readme",
   "dependencies": {
     "colors": "^1.1.2",
-    "inquirer": "^1.2.3",
+    "inquirer": "^3.0.6",
     "mkdirp": "^0.5.1",
     "serialport": "^4.0.7",
-    "yargs": "^6.6.0"
+    "yargs": "^8.0.1"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "istanbul": "^0.4.4",
+    "chai": "^4.0.1",
+    "istanbul": "^0.4.5",
     "mocha": "^3.4.2",
     "proxyquire": "^1.8.0",
     "rimraf": "^2.6.1",
