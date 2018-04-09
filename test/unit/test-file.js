@@ -65,8 +65,7 @@ describe("function isDirectoryEmpty()", () => {
               Destroy the empty directory we made for this test
               before we finish
             */
-            fs.rmdir(emptyDirectory);
-            done();
+            fs.rmdir(emptyDirectory, done);
         };
 
         isDirectoryEmpty(emptyDirectory).then(callback);

@@ -47,11 +47,12 @@ describe("thingssdk new", () => {
                 scripts: {
                     dev: "node ./scripts/upload development && npm run repl",
                     deploy: "node ./scripts/upload production",
-                    repl: "node ./scripts/repl"
+                    repl: "node ./scripts/repl",
+                    postinstall: "rimraf node_modules/bluetooth-hci-socket"
                 },
                 devDependencies: {
                     "thingssdk-deployer": "~1.0.1",
-                    "thingssdk-espruino-strategy": "~1.0.2"
+                    "thingssdk-espruino-strategy": "~1.0.3"
                 }
             };
             assert.deepEqual(pkgJSON, expectedJson, "package.json didn't match expectedJson");
