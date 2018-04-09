@@ -124,7 +124,7 @@ describe("thingssdk new", () => {
                     assert.notEqual(fs.readFileSync(mainPath, "utf-8"), newFileContents);
                     done();
                 });
-        }).timeout(5000);
+        });
 
         it("should abort if n", done => {
             assert.equal(fs.readFileSync(mainPath, "utf-8"), newFileContents);
@@ -138,7 +138,7 @@ describe("thingssdk new", () => {
                     assert.equal(fs.readFileSync(mainPath, "utf-8"), newFileContents);
                     done();
                 });
-        }).timeout(5000);
+        });
 
         it("should abort and error if y or n not pressent", done => {
             assert.equal(fs.readFileSync(mainPath, "utf-8"), newFileContents);
@@ -152,7 +152,7 @@ describe("thingssdk new", () => {
                     assert.equal(fs.readFileSync(mainPath, "utf-8"), newFileContents);
                     done();
                 });
-        }).timeout(5000);
+        });
     });
 
     describe("if arguments with tildes in the path are passed", () => {

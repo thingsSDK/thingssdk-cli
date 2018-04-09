@@ -7,9 +7,9 @@
     "thingssdk": "./bin/thingssdk.js"
   },
   "scripts": {
-    "test": "mocha --recursive",
+    "test": "mocha --recursive --timeout 5000 --exit",
     "combine-coverage": "node ./scripts/coverage_combine",
-    "test:coverage": "rimraf coverage && istanbul cover --report=none --print=none --include-pid node_modules/mocha/bin/_mocha -- --recursive && npm run combine-coverage"
+    "test:coverage": "rimraf coverage && istanbul cover --report=none --print=none --include-pid node_modules/mocha/bin/_mocha -- --recursive --timeout 5000 --exit && npm run combine-coverage"
   },
   "repository": {
     "type": "git",

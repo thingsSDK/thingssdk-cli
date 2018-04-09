@@ -75,6 +75,5 @@ describe("function getPorts()", () => {
             assert.isNull(err);
             done();
         });
-    }).timeout(4000);
-
+    });
 });
