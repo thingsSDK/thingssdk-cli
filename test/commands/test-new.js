@@ -1,7 +1,6 @@
 'use strict';
 
 const assert = require('chai').assert;
-const mkdirp = require('mkdirp');
 const {createApplication: newCommand} = require("../../lib/new");
 const fs = require('fs');
 const path = require('path');
