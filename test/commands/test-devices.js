@@ -38,14 +38,12 @@ describe("thingssdk devices", () => {
 
     before(done => {
       cleanTmp(() => {
-        mkdirp(checkDevicesPath, (err) => {
-          done();
-        });
+        mkdirp(checkDevicesPath).then(() => {done()}).catch(done);
       });
     });
 
     it("should create a `devices.json` in the correct folder", done => {
-      mkdirp(checkDevicesPath, (err) => {
+      mkdirp(checkDevicesPath).then(() => {
         devicesCommand(validArguments).then(() => {
           const devices = JSON.parse(fs.readFileSync(jsonPath));
           const expectedJson = {
@@ -59,12 +57,12 @@ describe("thingssdk devices", () => {
           assert.deepEqual(devices, expectedJson, "devices.json didn't match expectedJson");
           done();
         });
-      });
+      }).catch(done);
     });
 
 
     it("should create a `devices.json` in the correct folder with different params", done => {
-      mkdirp(checkDevicesPath, (err) => {
+      mkdirp(checkDevicesPath).then(() => {
         devicesCommand(otherValidArguments).then(() => {
           const devices = JSON.parse(fs.readFileSync(jsonPath));
           const expectedJson = {
@@ -78,7 +76,7 @@ describe("thingssdk devices", () => {
           assert.deepEqual(devices, expectedJson, "devices.json didn't match expectedJson");
           done();
         });
-      });
+      }).catch(done);
     });
 
     it("should exit correctly when correct aguments are passed", () => {

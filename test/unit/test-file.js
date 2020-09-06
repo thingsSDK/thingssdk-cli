@@ -44,7 +44,7 @@ describe("function isDirectoryEmpty()", () => {
 
     it("should return true if the given directory is empty", (done) => {
         const emptyDirectory = path.resolve(__dirname, "empty");
-        mkdirp(emptyDirectory);
+        mkdirp.sync(emptyDirectory);
 
         /**
           Initialize actual here so that we can update it with

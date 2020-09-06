@@ -11,9 +11,7 @@ describe("function getPorts()", () => {
     before(() => {
         getPorts = proxyquire('../../lib/core/ports', {
             'serialport': {
-                list: (callback) => {
-                    callback(error, ports);
-                }
+                list: () => (error ? Promise.reject(error) : Promise.resolve(ports))
             }
         }).getPorts;
     });
@@ -61,9 +59,11 @@ describe("function getPorts()", () => {
         let callBackTime = 0;
         const getPorts = proxyquire('../../lib/core/ports', {
             'serialport': {
-                list: (callback) => {
+                list: () => {
                     const ports = calls.shift();
-                    setTimeout(() => callback(null, ports), callBackTime+=1200);
+                    return new Promise((resolve) => {
+                        setTimeout(resolve, callBackTime+=1200, ports);
+                    });
                 }
             }
         }).getPorts;
